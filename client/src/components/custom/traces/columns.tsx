@@ -9,20 +9,13 @@ import {
     Clock,
     User,
     Eye,
-    ArrowUpDown,
+    ArrowUpDown, StarHalf, Star,
 } from "lucide-react";
 import {TruncatedText} from "@/components/custom/truncated-text.tsx";
 import {Sheet, SheetTrigger} from "@/components/ui/sheet.tsx";
 import TraceDetails from "@/components/custom/trace-details/trace-details.tsx";
+import type {Trace} from "@/shared/types.ts";
 
-export type Trace = {
-    id?: string;
-    question: string;
-    response: string;
-    user: string;
-    total_processing_time_sec: number;
-    message_type: "text" | "audio";
-};
 
 
 
@@ -108,8 +101,8 @@ export const Columns: ColumnDef<Trace>[] = [
         },
         cell: ({ row }) => {
             const time = row.original.total_processing_time_sec;
-            const isSlowResponse = time > 5;
-            const isVerySlowResponse = time > 10;
+            const isSlowResponse = time > 15;
+            const isVerySlowResponse = time > 20;
 
             return (
                 <div className="flex items-center gap-2">
@@ -130,7 +123,65 @@ export const Columns: ColumnDef<Trace>[] = [
         },
         sortingFn: "basic",
     },
-    {
+
+
+{
+    accessorKey: "rating",
+        header: "Rating",
+    cell: ({ row }) => {
+    const rating = row.original.rating;
+    if (!rating || rating === 0) {
+        return (
+            <span className="text-sm text-gray-400 italic">No rating</span>
+        );
+    }
+
+    const renderStars = () => {
+        const stars = [];
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 >= 0.5;
+
+        // Full stars
+        for (let i = 0; i < fullStars; i++) {
+            stars.push(
+                <Star
+                    key={`full-${i}`}
+                    className="h-4 w-4 text-yellow-400 fill-yellow-400"
+                />
+            );
+        }
+        if (hasHalfStar && fullStars < 5) {
+            stars.push(
+                <StarHalf
+                    key="half"
+                    className="h-4 w-4 text-yellow-400 fill-yellow-400"
+                />
+            );
+        }
+
+        const emptyStars = 5 - Math.ceil(rating);
+        for (let i = 0; i < emptyStars; i++) {
+            stars.push(
+                <Star
+                    key={`empty-${i}`}
+                    className="h-4 w-4 text-gray-300"
+                />
+            );
+        }
+
+        return stars;
+    };
+
+    return (
+        <div className="flex items-center gap-1">
+            {renderStars()}
+        </div>
+    );
+},
+    sortingFn: "basic",
+},
+
+{
         id: "actions",
         header: "Actions",
         cell: ({ row }) => (
