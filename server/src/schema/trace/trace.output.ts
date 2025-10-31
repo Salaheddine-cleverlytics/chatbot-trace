@@ -15,6 +15,7 @@ export const TraceOutputSchema = z.object({
     success: z.boolean(),
     total_processing_time_sec: z.number().optional(),
     chatbot_id:ObjectIdString,
+    rating:z.number(),
     asr: z
         .object({
             ogg_to_wav_conversion_sec: z.number().optional(),
