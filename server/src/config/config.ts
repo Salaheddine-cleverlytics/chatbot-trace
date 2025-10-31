@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
-dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 
 export const config = {
     port: parseInt(process.env.PORT || '5000', 10),
@@ -14,7 +14,7 @@ export const config = {
         },
     },
 
-    clientUrl: process.env.CLIENT_URL,
+    clientUrl: process.env.VITE_APP_URL,
 
     jwt: {
         secret: process.env.JWT_SECRET ,
@@ -22,14 +22,14 @@ export const config = {
 
     socket: {
         cors: {
-            origin: process.env.CLIENT_URL,
+            origin: process.env.VITE_APP_URL,
             methods: ['GET', 'POST'],
         },
     },
 };
 
 export function validateConfig(): void {
-    const required = ["MONGODB_URI", "JWT_SECRET", "CLIENT_URL"];
+    const required = ["MONGODB_URI", "JWT_SECRET", "VITE_APP_URL"];
     const missing = required.filter((key) => !process.env[key]);
 
     if (missing.length > 0) {

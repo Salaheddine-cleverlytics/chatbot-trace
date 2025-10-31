@@ -10,7 +10,10 @@ export const ChatbotOutputSchema = z.object({
     environment: z.enum(["dev", "prod"]),
     developerId: ObjectIdString,
     clients: z.array(ObjectIdString),
-
+    createdAt: z.preprocess((val) => {
+        if (val instanceof Date) return val.toISOString();
+        return val;
+    }, z.string())
 });
 
 

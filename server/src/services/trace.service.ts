@@ -26,7 +26,7 @@ export class TraceService {
     async getByChatbotId(chatbotId: string): Promise<TraceManyOutput> {
         if (!toObjectId(chatbotId)) throw new AppError("Invalid Chatbot ID format", 400);
         const traces = await this.traceRepository.findByChatbotId(chatbotId);
-        if (!traces || traces.length === 0) throw new AppError("No Traces found for this chatbot.");
+        if (!traces || traces.length === 0) return [];
         return  TraceManyOutputSchema.parse(traces);
     }
 
