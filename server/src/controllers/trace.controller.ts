@@ -2,7 +2,6 @@ import { injectable } from "tsyringe";
 import { NextFunction, Request, Response } from "express";
 import { TraceService } from "../services/trace.service";
 import {TraceInput, TraceInputSchema, TraceUpdateInput, TraceUpdateInputSchema} from "../schema/trace/trace.input";
-import { TraceOutputSchema, TraceManyOutputSchema } from "../schema/trace/trace.output";
 
 @injectable()
 export class TraceController {
@@ -29,7 +28,7 @@ export class TraceController {
             res.json({
                 success: true,
                 message: "Trace fetched successfully",
-                data: TraceOutputSchema.parse(trace),
+                data: trace,
             });
         } catch (error) {
             next(error);
@@ -39,11 +38,13 @@ export class TraceController {
     async getByChatbotId(req: Request, res: Response, next: NextFunction) {
         try {
             const { chatbotId } = req.params;
-            const traces = await this.traceService.getByChatbotId(chatbotId);
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 10;
+            const traces = await this.traceService.getByChatbotId(chatbotId, page, limit);
             res.json({
                 success: true,
                 message: "Traces fetched successfully",
-                data: TraceManyOutputSchema.parse(traces),
+                data: traces,
             });
         } catch (error) {
             next(error);

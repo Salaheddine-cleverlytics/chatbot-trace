@@ -1,7 +1,11 @@
 import { injectable } from "tsyringe";
 import { TraceRepository } from "../repositories/trace.repository";
 import {TraceInput, TraceUpdateInput} from "../schema/trace/trace.input";
-import { TraceOutput, TraceOutputSchema, TraceManyOutput, TraceManyOutputSchema } from "../schema/trace/trace.output";
+import {
+    TraceOutput,
+    TraceOutputSchema,
+    PaginatedTraceOutput, PaginatedTraceOutputSchema
+} from "../schema/trace/trace.output";
 import {AppError} from "../core/errors/AppError";
 import {toObjectId} from "../core/db/mapper";
 
@@ -26,12 +30,17 @@ export class TraceService {
         return TraceOutputSchema.parse(trace);
     }
 
-    async getByChatbotId(chatbotId: string): Promise<TraceManyOutput> {
+    async getByChatbotId(
+        chatbotId: string,
+        page = 1,
+        limit = 10
+    ): Promise<PaginatedTraceOutput> {
         if (!toObjectId(chatbotId)) throw new AppError("Invalid Chatbot ID format", 400);
-        const traces = await this.traceRepository.findByChatbotId(chatbotId);
-        if (!traces || traces.length === 0) return [];
-        return  TraceManyOutputSchema.parse(traces);
+
+        const result = await this.traceRepository.findByChatbotId(chatbotId, page, limit);
+         return  PaginatedTraceOutputSchema.parse(result);
     }
+
 
     async update(id: string, input:TraceUpdateInput): Promise<TraceOutput> {
         if (!toObjectId(id)) throw new AppError("Invalid Trace ID format", 400);

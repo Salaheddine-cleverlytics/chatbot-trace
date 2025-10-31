@@ -75,9 +75,17 @@ export const TraceOutputSchema = z.object({
 });
 
 
+export const PaginatedTraceOutputSchema = z.object({
+    data: z.array(TraceOutputSchema),
+    total: z.number(),
+    page: z.number(),
+    limit: z.number(),
+    totalPages: z.number(),
+});
 
 export const TraceManyOutputSchema = z.array(TraceOutputSchema);
 
+export type PaginatedTraceOutput = z.infer<typeof PaginatedTraceOutputSchema>;
 export type TraceOutput = z.infer<typeof TraceOutputSchema>;
 export type TraceManyOutput = z.infer<typeof TraceManyOutputSchema>;
 
