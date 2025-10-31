@@ -9,10 +9,13 @@ import {toObjectId} from "../core/db/mapper";
 export class TraceService {
     constructor(private readonly traceRepository: TraceRepository) {}
 
-    async create(input: TraceInput): Promise<TraceOutput> {
-        const trace = await this.traceRepository.create(input);
-        return TraceOutputSchema.parse(trace);
-    }
+        async create(input: TraceInput): Promise<TraceOutput> {
+            if (input.rating &&  input.rating > 5) {
+                throw new AppError("Rating cannot be greater than 5", 400);
+            }
+            const trace = await this.traceRepository.create(input);
+            return TraceOutputSchema.parse(trace);
+        }
 
     async getById(id: string): Promise<TraceOutput> {
           if (!toObjectId(id)) throw new AppError("Invalid Trace ID format", 400);

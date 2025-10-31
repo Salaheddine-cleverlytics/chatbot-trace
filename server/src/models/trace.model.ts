@@ -8,6 +8,7 @@ export interface ITrace extends Document {
     response: string;
     success: boolean;
     total_processing_time_sec: number;
+    rating:number
     chatbot_id:Types.ObjectId;
     asr?: {
         ogg_to_wav_conversion_sec?: number;
@@ -60,7 +61,7 @@ const TraceSchema: Schema<ITrace> = new Schema(
         success: { type: Boolean, default: false },
         total_processing_time_sec: { type: Number },
         chatbot_id:{type:Schema.Types.ObjectId,ref:"Chatbot", required: true},
-
+        rating: { type: Number, min: 0, max: 5 },
         asr: {
             type: Object,
             default: {},

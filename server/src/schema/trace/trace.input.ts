@@ -16,6 +16,13 @@ export const TraceInputSchema = z.object({
     success: z.boolean(),
     total_processing_time_sec: z.number(),
     chatbot_id:ObjectIdTransformSchema,
+    rating: z
+        .number({
+            invalid_type_error: "Rating must be a number",
+        })
+        .min(0, { message: "Rating cannot be less than 0" })
+        .max(5, { message: "Rating cannot be greater than 5" })
+        .optional(),
 
     asr: z
         .object({
@@ -81,7 +88,7 @@ export const TraceUpdateInputSchema = z.object({
     success: z.boolean().optional(),
     total_processing_time_sec: z.number().optional(),
     chatbot_id:ObjectIdTransformSchema.optional(),
-
+    rating: z.number().min(0).max(5).optional(),
     asr: z
         .object({
             ogg_to_wav_conversion_sec: z.number().optional(),
