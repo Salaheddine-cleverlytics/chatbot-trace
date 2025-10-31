@@ -20,9 +20,33 @@ export class TraceRepository {
     /**
      * Get traces by chatbot ID
      */
-    async findByChatbotId(chatbotId: string): Promise<ITrace[]> {
-        return await Trace.find({chatbot_id: chatbotId }).sort({ createdAt: -1 }).exec();
+    async findByChatbotId(chatbotId: string, page = 1, limit = 5): Promise<{
+        data: ITrace[];
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    }> {
+        const skip = (page - 1) * limit;
+
+        const [data, total] = await Promise.all([
+            Trace.find({ chatbot_id: chatbotId })
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit)
+                .exec(),
+            Trace.countDocuments({ chatbot_id: chatbotId }),
+        ]);
+
+        return {
+            data,
+            total,
+            page,
+            limit,
+            totalPages: Math.ceil(total / limit),
+        };
     }
+
 
     /**
      * Update trace by ID
