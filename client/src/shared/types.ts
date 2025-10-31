@@ -48,10 +48,11 @@ export interface Trace {
     question: string;
     response: string;
     message_type: "text" | "audio";
-    received_at?: string | Date;
-    success?: boolean;
+    received_at: string | Date;
+    success: boolean;
+    rating?:number;
     total_processing_time_sec: number;
-    chatbot_id?: string;
+    chatbot_id: string;
     asr?: ASRMetrics;
     webhook_steps?: WebhookSteps;
     rag?: RAGMetrics;
