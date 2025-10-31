@@ -1,35 +1,76 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import LoginPage from "@/pages/login.tsx";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import Dashboard from "@/pages/dashboard.tsx";
+import ChatbotsPage from "@/components/custom/chatbots/page.tsx";
+import TracesPage from "@/components/custom/traces/page.tsx";
+import { useAuthStore } from "@/store/auth-store.ts";
 
-function App() {
-  const [count, setCount] = useState(0)
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+    const user = useAuthStore((state) => state.user);
+
+    if (!user) {
+        return <Navigate to="/auth" replace />;
+    }
+
+    return <>{children}</>;
+}
+function PublicRoute({ children }: { children: React.ReactNode }) {
+    const user = useAuthStore((state) => state.user);
+
+    if (user) {
+        return <Navigate to="/dashboard" replace />;
+    }
+
+    return <>{children}</>;
 }
 
-export default App
+export default function App() {
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
+                <Route
+                    path="/auth"
+                    element={
+                        <PublicRoute>
+                            <LoginPage />
+                        </PublicRoute>
+                    }
+                />
+                <Route
+                    path="/dashboard"
+                    element={
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
+                    }
+                >
+                    <Route index element={<ChatbotsPage />} />
+                    <Route path="chatbots" element={<ChatbotsPage />} />
+                    <Route path="traces/:id" element={<TracesPage/>
+                    } />
+                </Route>
+
+                <Route
+                    path="*"
+                    element={
+                        <div className="flex items-center justify-center h-screen bg-gray-50">
+                            <div className="text-center space-y-4">
+                                <h1 className="text-6xl font-bold text-gray-900">404</h1>
+                                <p className="text-xl text-gray-600">Page not found</p>
+                                <a
+                                    href="/dashboard"
+                                    className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                >
+                                    Go to Dashboard
+                                </a>
+                            </div>
+                        </div>
+                    }
+                />
+            </Routes>
+        </BrowserRouter>
+    );
+}

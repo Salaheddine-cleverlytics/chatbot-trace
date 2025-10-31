@@ -1,7 +1,19 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import path from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+    plugins: [react()],
+    resolve: {
+        alias: {
+            "@": path.resolve(__dirname, "./src"),
+            "@repo": path.resolve(__dirname, "../server/src"),
+        },
+    },
+    server: {
+        host: true,
+        port: 5173,
+        allowedHosts: ["trace-platform"],
+    },
 })

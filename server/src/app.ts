@@ -12,7 +12,10 @@ validateConfig();
 const app: Express = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin:"http://trace-platform:5173",
+    credentials: true,
+}));
 app.use(express.json());
 
 // MongoDB Connection

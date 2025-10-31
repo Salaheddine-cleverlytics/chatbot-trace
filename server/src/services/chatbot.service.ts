@@ -10,6 +10,7 @@ import {injectable} from "tsyringe";
 import {toObjectId} from "../core/db/mapper";
 import {AppError} from "../core/errors/AppError";
 
+
 @injectable()
 export class ChatbotService {
 
@@ -42,7 +43,7 @@ export class ChatbotService {
         return ChatbotOutputSchema.parse(chatbot);
     }
 
-    async getByUser(userId: string): Promise<ChatbotManyOutput> {
+    async getByUser(userId:string): Promise<ChatbotManyOutput> {
         if (!toObjectId(userId)) {
             throw new AppError("Invalid user ID format", 400);
         }
